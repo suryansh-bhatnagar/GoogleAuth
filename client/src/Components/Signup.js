@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Signup = () => {
 
@@ -44,7 +44,7 @@ const Signup = () => {
                     <input className='border border-gray-400 rounded-md px-4 py-1' type="email" name="" id="" placeholder='Email' required onChange={(e) => setEmail(e.target.value)} />
                     <input className='border border-gray-400 rounded-md px-4 py-1' type="password" name="" id="" placeholder='Password' required onChange={(e) => setPassword(e.target.value)} />
                     <button className='bg-gray-900 w-fit  text-white px-4 py-1 rounded-md mx-auto' onClick={handleSignup}>Signup</button>
-                    <p className='text-sm text-center'>Already have account ? <a className='text-blue-700' href="login">Login</a></p>
+                    <p className='text-sm text-center'>Already have account ? <Link to={'/login'} className='text-blue-700' >Login</Link></p>
                     <button className='border border-gray-600 w-fit mx-auto text-sm px-4 py-1 rounded-md' onClick={loginwithgoogle}>
                         Sign In With Google
                     </button>
