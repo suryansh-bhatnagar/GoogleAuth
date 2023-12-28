@@ -9,21 +9,6 @@ const Headers = () => {
     const [userdata, setUserdata] = useState({});
     const location = useLocation();
 
-    const getUser = async () => {
-        try {
-            const response = token === null ? await axios.get(`
-            ${process.env.REACT_APP_SERVER_URL}/login/sucess`, { withCredentials: true }) : await axios.get(`${process.env.REACT_APP_SERVER_URL}/login/sucess`, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                    Authorization: `Bearer ${token}`,
-                }
-            });
-            console.log('GEt user  response', response)
-            setUserdata(response.data.user)
-        } catch (error) {
-            console.log("error", error)
-        }
-    }
 
     // logoout
     const logout = () => {
@@ -32,10 +17,26 @@ const Headers = () => {
     }
 
     useEffect(() => {
+        const getUser = async () => {
+            try {
+                const response = token === null ? await axios.get(`
+                ${process.env.REACT_APP_SERVER_URL}/login/sucess`, { withCredentials: true }) : await axios.get(`${process.env.REACT_APP_SERVER_URL}/login/sucess`, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                        Authorization: `Bearer ${token}`,
+                    }
+                });
+                console.log('GEt user  response', response)
+                setUserdata(response.data.user)
+            } catch (error) {
+                console.log("error", error)
+            }
+        }
+
         if (location.pathname === '/dashboard') {
             getUser()
         }
-    }, [location.pathname])
+    }, [location.pathname, token])
 
     console.log('User data ', userdata)
     return (
