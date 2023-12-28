@@ -9,43 +9,12 @@ const passport = require("passport");
 const OAuth2Strategy = require("passport-google-oauth2").Strategy;
 const userdb = require("./model/userSchema")
 const bcrypt = require("bcrypt");
-const { signup, login } = require("./controllers/auth");
+const { signup, login, isAuth } = require("./controllers/auth");
+const { createCourse, getAllCourse } = require("./controllers/course");
 const clientid = process.env.CLIENT_ID
 const clientsecret = process.env.CLIENT_SECRET
-const LocalStrategy = require('passport-local').Strategy;
 
-// Configure the local strategy
-passport.use('local', new LocalStrategy(
-    async function (email, password, done) {
-        console.log('Local Strategy initialized');
-        if (!email || !password) {
-            // Return 400 Bad Request status code with error message
-            return res.status(400).json({
-                success: false,
-                message: `Please Fill up All the Required Fields`,
-            })
-        }
 
-        // Find user with provided email
-        const user = await userdb.findOne({ email })
-
-        // If user not found with provided email
-        if (!user) {
-            // Return 401 Unauthorized status code with error message
-            return res.status(401).json({
-                success: false,
-                message: `User is not Registered with Us Please SignUp to Continue`,
-            })
-        }
-
-        // Generate JWT token and Compare Password
-        if (await bcrypt.compare(password, user.password)) {
-            return done(null, { id: 1, username: 'user' });
-        } else {
-            return done(null, false);
-        }
-    }
-));
 
 app.use(cors({
     origin: "http://localhost:3000",
@@ -113,12 +82,13 @@ app.get("/auth/google/callback", passport.authenticate("google", {
 
 // Manual  Endpoint
 app.post('/auth/signup', signup);
-// app.post('/auth/login', login);
-// Route for handling manual login
 app.post('/auth/login', login);
+app.post('/course/create', createCourse)
+app.get('/course/getAll', getAllCourse)
 
-app.get("/login/sucess", async (req, res) => {
-    // console.log('REQ ', req);
+
+
+app.get("/login/sucess", isAuth, async (req, res) => {
     if (req.user) {
         res.status(200).json({ message: "user Login", user: req.user })
     } else {

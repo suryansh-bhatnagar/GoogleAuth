@@ -4,6 +4,43 @@ const { request } = require("express");
 const jwt = require("jsonwebtoken")
 require("dotenv").config();
 
+
+exports.isAuth = async (req, res, next) => {
+    try {
+
+        if (!req.user) {
+            console.log('Inside !req.user')
+
+            // Extracting JWT from request cookies, body or header
+            const token = req.header("Authorization").replace("Bearer ", "");
+            // If JWT is missing, return 401 Unauthorized response
+            if (!token) {
+                return res.status(401).json({ success: false, message: `Token Missing` });
+            }
+
+            try {
+                // Verifying the JWT using the secret key stored in environment variables
+                const decode = await jwt.verify(token, process.env.JWT_SECRET);
+                console.log(decode);
+                // Storing the decoded JWT payload in the request object for further use
+                req.user = decode;
+            } catch (error) {
+                // If JWT verification fails, return 401 Unauthorized response
+                return res
+                    .status(401)
+                    .json({ success: false, message: "token is invalid" });
+            }
+        }
+        // If JWT is valid, move on to the next middleware or request handler
+        next();
+    } catch (error) {
+        // If there is an error during the authentication process, return 401 Unauthorized response
+        return res.status(401).json({
+            success: false,
+            message: `Something Went Wrong While Validating the Token`,
+        });
+    }
+}
 exports.login = async (req, res) => {
     try {
         // Get email and password from request body
@@ -33,32 +70,20 @@ exports.login = async (req, res) => {
         // Generate JWT token and Compare Password
         if (await bcrypt.compare(password, user.password)) {
             const token = jwt.sign(
-                { email: user.email, id: user._id, role: user.role },
+                { email: user.email, id: user._id, displayName: user.displayName },
                 process.env.JWT_SECRET,
                 {
                     expiresIn: "24h",
                 }
             )
 
-            console.log('JWT token generated ', token)
 
-
-            // Save token to user document in database
-            user.token = token
-            user.password = undefined
-            // Set cookie for token and return success response
-            const options = {
-                expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-                httpOnly: true,
-            }
-            req.user = user;
-            res.cookie("token", token, options).status(200).json({
+            return res.status(200).json({
                 success: true,
                 token,
                 user,
                 message: `User Login Success`,
             })
-            res.redirect('http://localhost:3000/dashboard');
         } else {
             return res.status(401).json({
                 success: false,

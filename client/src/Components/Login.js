@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
-import "./login.css"
+import React, { useContext, useState } from 'react'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../Context/AuthContext';
 
 const Login = () => {
 
     const navigate = useNavigate();
+    const { setToken } = useContext(AuthContext);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -16,7 +17,6 @@ const Login = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        console.log("handle signup", email, password,);
         const data = await axios.post('http://localhost:6005/auth/login', {
             email: email,
             password: password,
@@ -24,20 +24,22 @@ const Login = () => {
         console.log(data);
 
         if (data.data.success) {
-            navigate('/dashboard', { 'loginType': 'manual' });
+            setToken(data.data.token);
+            localStorage.setItem('token', data.data.token);
+            navigate('/dashboard');
         }
     }
 
     return (
         <>
-            <div className="login-page">
-                <h1 style={{ textAlign: "center" }}>Login</h1>
-                <div className="form">
-                    <input type="email" name="" id="" placeholder='email' required onChange={(e) => setEmail(e.target.value)} />
-                    <input type="password" name="" id="" placeholder='password' required onChange={(e) => setPassword(e.target.value)} />
-                    <button onClick={handleLogin}>Login</button>
-                    <p className='message'>Not Registerd? <a href="signup">Create an account</a></p>
-                    <button className='login-with-google-btn' onClick={loginwithgoogle}>
+            <div className="  w-1/3 mx-auto my-16 flex flex-col gap-6">
+                <h1 className='text-3xl font-semibold text-center'>Login</h1>
+                <div className="flex flex-col gap-4">
+                    <input className='border border-gray-400 rounded-md px-4 py-1' type="email" name="" id="" placeholder='Email' required onChange={(e) => setEmail(e.target.value)} />
+                    <input className='border border-gray-400 rounded-md px-4 py-1' type="password" name="" id="" placeholder='Password' required onChange={(e) => setPassword(e.target.value)} />
+                    <button className='bg-gray-900 w-fit  text-white px-4 py-1 rounded-md mx-auto' onClick={handleLogin}>Login</button>
+                    <p className='text-sm text-center'>Not Registerd? <a className='text-blue-700' href="signup">Create an account</a></p>
+                    <button className='border border-gray-600 w-fit mx-auto text-sm px-4 py-1 rounded-md' onClick={loginwithgoogle}>
                         Sign In With Google
                     </button>
                 </div>

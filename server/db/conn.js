@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const DB = 'mongodb://127.0.0.1:27017/mernAuth';
+const DB = process.env.DATABASE_URL;
 
 mongoose.connect(DB, {
     useUnifiedTopology: true,

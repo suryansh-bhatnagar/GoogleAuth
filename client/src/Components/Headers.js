@@ -1,16 +1,23 @@
-import React, { useEffect, useState } from 'react'
-import "./header.css"
-import { NavLink } from "react-router-dom"
+import React, { useContext, useEffect, useState } from 'react'
+import { NavLink, useLocation } from "react-router-dom"
 import axios from "axios"
+import { AuthContext } from '../Context/AuthContext';
 
 const Headers = () => {
+
+    const { token } = useContext(AuthContext);
     const [userdata, setUserdata] = useState({});
-    console.log("response", userdata)
+    const location = useLocation();
 
     const getUser = async () => {
         try {
-            const response = await axios.get("http://localhost:6005/login/sucess", { withCredentials: true });
-
+            const response = token === null ? await axios.get("http://localhost:6005/login/sucess", { withCredentials: true }) : await axios.get("http://localhost:6005/login/sucess", {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+            console.log('GEt user  response', response)
             setUserdata(response.data.user)
         } catch (error) {
             console.log("error", error)
@@ -19,52 +26,52 @@ const Headers = () => {
 
     // logoout
     const logout = () => {
+        localStorage.removeItem('token');
         window.open("http://localhost:6005/logout", "_self")
     }
 
     useEffect(() => {
-        // getUser()
-    }, [])
+        if (location.pathname === '/dashboard') {
+            getUser()
+        }
+    }, [location.pathname])
+
+    console.log('User data ', userdata)
     return (
         <>
-            <header>
-                <nav>
-                    <div className="left">
-                        <h1>Suryansh</h1>
-                    </div>
-                    <div className="right">
-                        <ul>
-                            <li>
+            <header className='bg-slate-900 text-white h-14 flex px-4 justify-between items-center'>
+                <div className='bg-slate-600 my-2 py-1 pl-2 pr-20 rounded-sm' >
+                    Search 8000+ tutorials
+                </div>
+                <div>
+                    <p>FreeCodeCamp 🔥</p>
+                </div>
+                <div className='flex' >
+                    <ul className='flex gap-4 items-center'>
+                        <li>
+
+                        </li>
+                        {
+                            Object?.keys(userdata)?.length > 0 ? (
+                                <>
+                                    <li>{userdata?.displayName}</li>
+                                    <li>
+
+                                    </li>
+                                    <li className='cursor-pointer' onClick={logout}>Logout</li>
+                                </>
+                            ) : <li className='flex gap-4'>
                                 <NavLink to="/">
                                     Home
                                 </NavLink>
+                                <NavLink to="/login">
+                                    Login
+                                </NavLink>
                             </li>
-                            {
-                                Object?.keys(userdata)?.length > 0 ? (
-                                    <>
-                                        <li style={{ color: "black", fontWeight: "bold" }}>{userdata?.displayName}</li>
-                                        <li>
-                                            <NavLink to="/dashboard">
-                                                Dashboard
-                                            </NavLink>
-                                        </li>
-                                        <li onClick={logout}>Logout</li>
-                                        <li>
-                                            <img src={userdata?.image} style={{ width: "50px", borderRadius: "50%" }} alt="" />
-                                        </li>
-                                    </>
-                                ) : <li>
-                                    <NavLink to="/login">
-                                        Login
-                                    </NavLink>
-                                </li>
-                            }
+                        }
 
-
-
-                        </ul>
-                    </div>
-                </nav>
+                    </ul>
+                </div>
             </header>
         </>
     )
