@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 require("./db/conn")
-const PORT = 6005;
+const PORT = process.env.PORT || 6005;
 const session = require("express-session");
 const passport = require("passport");
 const OAuth2Strategy = require("passport-google-oauth2").Strategy;
