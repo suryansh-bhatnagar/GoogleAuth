@@ -11,14 +11,13 @@ const userdb = require("./model/userSchema")
 const bcrypt = require("bcrypt");
 const { signup, login, isAuth } = require("./controllers/auth");
 const { createCourse, getAllCourse } = require("./controllers/course");
-const { FRONTEND_URL } = require("./Constants");
 const clientid = process.env.CLIENT_ID
 const clientsecret = process.env.CLIENT_SECRET
 
 
 
 app.use(cors({
-    origin: FRONTEND_URL,
+    origin: process.env.FRONTEND_URL,
     methods: "GET,POST,PUT,DELETE",
     credentials: true
 }));
@@ -77,8 +76,8 @@ passport.deserializeUser((user, done) => {
 app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
 app.get("/auth/google/callback", passport.authenticate("google", {
-    successRedirect: `${FRONTEND_URL}/dashboard`,
-    failureRedirect: `${FRONTEND_URL}/login`
+    successRedirect: `${process.env.FRONTEND_URL}/dashboard`,
+    failureRedirect: `${process.env.FRONTEND_URL}/login`
 }))
 
 // Manual  Endpoint
@@ -100,7 +99,7 @@ app.get("/login/sucess", isAuth, async (req, res) => {
 app.get("/logout", (req, res, next) => {
     req.logout(function (err) {
         if (err) { return next(err) }
-        res.redirect(FRONTEND_URL);
+        res.redirect(process.env.FRONTEND_URL);
     })
 })
 

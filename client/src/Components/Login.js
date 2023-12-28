@@ -2,7 +2,6 @@ import React, { useContext, useState } from 'react'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../Context/AuthContext';
-import { SERVER_URL } from '../Constants';
 
 const Login = () => {
 
@@ -13,21 +12,27 @@ const Login = () => {
     const [password, setPassword] = useState('');
 
     const loginwithgoogle = () => {
-        window.open(`${SERVER_URL}/auth/google/callback`, "_self")
+        window.open(`${process.env.REACT_APP_SERVER_URL}/auth/google/callback`, "_self")
     }
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        const data = await axios.post(`${SERVER_URL}/auth/login`, {
-            email: email,
-            password: password,
-        });
-        console.log(data);
+        try {
+            const data = await axios.post(`${process.env.REACT_APP_SERVER_URL}/auth/login`, {
+                email: email,
+                password: password,
+            });
+            console.log(data);
 
-        if (data.data.success) {
-            setToken(data.data.token);
-            localStorage.setItem('token', data.data.token);
-            navigate('/dashboard');
+            if (data.data.success) {
+                setToken(data.data.token);
+                localStorage.setItem('token', data.data.token);
+                navigate('/dashboard');
+            }
+
+        } catch (error) {
+            console.log(error)
+            alert(error.response.data.message);
         }
     }
 
