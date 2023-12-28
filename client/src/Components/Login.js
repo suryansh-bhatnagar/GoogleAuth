@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../Context/AuthContext';
+import { SERVER_URL } from '../Constants';
 
 const Login = () => {
 
@@ -12,12 +13,12 @@ const Login = () => {
     const [password, setPassword] = useState('');
 
     const loginwithgoogle = () => {
-        window.open("http://localhost:6005/auth/google/callback", "_self")
+        window.open(`${SERVER_URL}/auth/google/callback`, "_self")
     }
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        const data = await axios.post('http://localhost:6005/auth/login', {
+        const data = await axios.post(`${SERVER_URL}/auth/login`, {
             email: email,
             password: password,
         });

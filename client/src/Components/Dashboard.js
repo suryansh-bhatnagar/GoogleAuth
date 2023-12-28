@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import CourseItem from './CourseItem';
 import { AuthContext } from '../Context/AuthContext';
+import { SERVER_URL } from '../Constants';
 
 const Dashboard = () => {
 
@@ -13,7 +14,7 @@ const Dashboard = () => {
   console.log('On dashboard', params)
   const getUser = async () => {
     try {
-      const response = token === null ? await axios.get("http://localhost:6005/login/sucess", { withCredentials: true }) : await axios.get("http://localhost:6005/login/sucess", {
+      const response = token === null ? await axios.get(`${SERVER_URL}/login/sucess`, { withCredentials: true }) : await axios.get(`${SERVER_URL}/login/sucess`, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
@@ -27,7 +28,7 @@ const Dashboard = () => {
   }
 
   const getAllCourses = async () => {
-    const response = await axios.get('http://localhost:6005/course/getAll', {
+    const response = await axios.get(`${SERVER_URL}/course/getAll`, {
       courseTitle: "React bootcamp",
       courseDuration: "300 hours"
     })

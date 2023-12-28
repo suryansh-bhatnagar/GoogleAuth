@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { SERVER_URL } from '../Constants';
 
 const Signup = () => {
 
@@ -11,13 +12,13 @@ const Signup = () => {
     const [password, setPassword] = useState('');
 
     const loginwithgoogle = () => {
-        window.open("http://localhost:6005/auth/google/callback", "_self")
+        window.open(`${SERVER_URL}/auth/google/callback`, "_self")
     }
 
     const handleSignup = async (e) => {
         e.preventDefault();
         console.log("handle signup", email, password, displayName);
-        const data = await axios.post('http://localhost:6005/auth/signup', {
+        const data = await axios.post(`${SERVER_URL}/auth/signup`, {
             email: email,
             password: password,
             displayName: displayName

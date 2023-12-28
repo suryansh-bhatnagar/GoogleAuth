@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { NavLink, useLocation } from "react-router-dom"
 import axios from "axios"
 import { AuthContext } from '../Context/AuthContext';
+import { SERVER_URL } from '../Constants';
 
 const Headers = () => {
 
@@ -11,7 +12,8 @@ const Headers = () => {
 
     const getUser = async () => {
         try {
-            const response = token === null ? await axios.get("http://localhost:6005/login/sucess", { withCredentials: true }) : await axios.get("http://localhost:6005/login/sucess", {
+            const response = token === null ? await axios.get(`
+            ${SERVER_URL}/login/sucess`, { withCredentials: true }) : await axios.get(`${SERVER_URL}/login/sucess`, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     Authorization: `Bearer ${token}`,
@@ -27,7 +29,7 @@ const Headers = () => {
     // logoout
     const logout = () => {
         localStorage.removeItem('token');
-        window.open("http://localhost:6005/logout", "_self")
+        window.open(`${SERVER_URL}/logout`, "_self")
     }
 
     useEffect(() => {

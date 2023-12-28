@@ -11,13 +11,14 @@ const userdb = require("./model/userSchema")
 const bcrypt = require("bcrypt");
 const { signup, login, isAuth } = require("./controllers/auth");
 const { createCourse, getAllCourse } = require("./controllers/course");
+const { FRONTEND_URL } = require("./Constants");
 const clientid = process.env.CLIENT_ID
 const clientsecret = process.env.CLIENT_SECRET
 
 
 
 app.use(cors({
-    origin: "http://localhost:3000",
+    origin: FRONTEND_URL,
     methods: "GET,POST,PUT,DELETE",
     credentials: true
 }));
@@ -76,8 +77,8 @@ passport.deserializeUser((user, done) => {
 app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
 app.get("/auth/google/callback", passport.authenticate("google", {
-    successRedirect: "http://localhost:3000/dashboard",
-    failureRedirect: "http://localhost:3000/login"
+    successRedirect: `${FRONTEND_URL}/dashboard`,
+    failureRedirect: `${FRONTEND_URL}/login`
 }))
 
 // Manual  Endpoint
@@ -99,7 +100,7 @@ app.get("/login/sucess", isAuth, async (req, res) => {
 app.get("/logout", (req, res, next) => {
     req.logout(function (err) {
         if (err) { return next(err) }
-        res.redirect("http://localhost:3000");
+        res.redirect(FRONTEND_URL);
     })
 })
 
